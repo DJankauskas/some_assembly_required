@@ -57,7 +57,7 @@ pub fn Output(output: &[String]) -> View {
             Text(self, "Output:"),
             Div(
                 self,
-                style = "border: 1px solid black;",
+                style = "border: 1px solid black; font-family: monospace;",
                 (0..tracked!(output).len())
                     .map(|i| Div(self, key = i, [Text(self, key = i, &tracked!(output)[i])]))
                     .collect::<Vec<_>>(),

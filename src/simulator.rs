@@ -59,7 +59,12 @@ impl Simulator {
                 Instruction::Printr => {
                     let pc = if self.pc == 0 { 1023 } else { self.pc - 1 };
                     self.output.push(self.program[pc].to_string());
-                    self.output.push(format!("registers: {:?}", self.registers));
+                    let mut register_output = String::new();
+                    for i in 0..8 {
+                        register_output += &format!("r{}: {}, ", i, self.registers[i]);
+                    }
+                    register_output += &format!("r15: {}", self.registers[15]);
+                    self.output.push(register_output);
                     self.pc += 1;
                 }
                 Instruction::Copy(dest, src) => {
