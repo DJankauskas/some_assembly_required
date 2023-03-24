@@ -30,7 +30,6 @@ pub enum Instruction {
     Add(Register, Register, Register),
     Sub(Register, Register, Register),
     Mul(Register, Register, Register),
-    Div(Register, Register, Register),
     Print,
     Printr,
     Copy(Register, Register),
@@ -55,9 +54,6 @@ impl Display for Instruction {
             }
             Instruction::Mul(dest, src1, src2) => {
                 write!(f, "mul {}, {}, {}", dest, src1, src2)
-            }
-            Instruction::Div(dest, src1, src2) => {
-                write!(f, "div {}, {}, {}", dest, src1, src2)
             }
             Instruction::Print => write!(f, "print"),
             Instruction::Printr => write!(f, "printr"),
