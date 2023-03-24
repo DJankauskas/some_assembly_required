@@ -5,14 +5,14 @@ mod ast;
 mod simulator;
 lalrpop_mod!(pub parser);
 
-use avalanche::{component, state, store, tracked, View};
+use avalanche::{component, state, tracked, View};
 use avalanche_web::components::{Button, Div, Text, TextArea, H1};
 
 #[component]
 pub fn App() -> View {
     let (code, set_code) = state(self, || String::new());
     let (simulator, update_simulator) = state(self, || simulator::Simulator::new(&[]));
-    let (output, set_output) = store(self, |_| Vec::new());
+    let (output, set_output) = state(self, || Vec::new());
     Div(
         self,
         [
@@ -43,12 +43,25 @@ pub fn App() -> View {
                 [Text(self, "Run")],
             ),
             (!tracked!(simulator).output.is_empty())
-                .then(|| {
-                    Div(self, style="border: 1px solid black;", [
-                    Text(self, tracked!(simulator).output.join("\n"))
-                    ])
-                })
+                .then(|| Output(self, tracked!(output)))
                 .into(),
+        ],
+    )
+}
+
+#[component]
+pub fn Output(output: &[String]) -> View {
+    Div(
+        self,
+        [
+            Text(self, "Output:"),
+            Div(
+                self,
+                style = "border: 1px solid black;",
+                (0..tracked!(output).len())
+                    .map(|i| Div(self, key = i, [Text(self, key = i, &tracked!(output)[i])]))
+                    .collect::<Vec<_>>(),
+            ),
         ],
     )
 }

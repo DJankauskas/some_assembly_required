@@ -3,7 +3,22 @@ use crate::ast::{Instruction, Register};
 grammar;
 
 Register: Register = {
-    <r: r"r[0-9]+"> => Register::new(r[1..].parse().unwrap()),
+    "r0" => Register::new(0),
+    "r1" => Register::new(1),
+    "r2" => Register::new(2),
+    "r3" => Register::new(3),
+    "r4" => Register::new(4),
+    "r5" => Register::new(5),
+    "r6" => Register::new(6),
+    "r7" => Register::new(7),
+    "r8" => Register::new(8),
+    "r9" => Register::new(9),
+    "r10" => Register::new(10),
+    "r11" => Register::new(11),
+    "r12" => Register::new(12),
+    "r13" => Register::new(13),
+    "r14" => Register::new(14),
+    "r15" => Register::new(15),
 }
 
 Constant: u64 = {
@@ -18,12 +33,13 @@ Instruction: Instruction = {
     "mul" <r0: Register> "," <r1: Register> "," <r2: Register> => Instruction::Mul(r0, r1, r2),
     "div" <r0: Register> "," <r1: Register> "," <r2: Register> => Instruction::Div(r0, r1, r2),
     "print" => Instruction::Print,
+    "printr" => Instruction::Printr,
     "copy" <r0: Register> "," <r1: Register> => Instruction::Copy(r0, r1),
     "beq" <r0: Register> "," <r1: Register> "," <r2: Register> => Instruction::Beq(r0, r1, r2),
     "bne" <r0: Register> "," <r1: Register> "," <r2: Register> => Instruction::Bne(r0, r1, r2),
-    "j" <Constant> => Instruction::J(<>),
-    "jr" <Register> => Instruction::Jr(<>),
+    "j" <Register> => Instruction::J(<>),
     "halt" => Instruction::Halt,
+    "write" <dst: Register> "," "[" <instr: Instruction> "]" => Instruction::Write(dst, Box::new(instr)),
 }
 
 pub Program: Vec<Instruction> = {

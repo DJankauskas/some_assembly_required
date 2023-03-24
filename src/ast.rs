@@ -17,7 +17,13 @@ impl Register {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+impl Display for Register {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "r{}", self.0)
+    }
+}
+
+#[derive(Clone, Debug)]
 pub enum Instruction {
     Nop,
     Mov(Register, u64),
@@ -26,43 +32,45 @@ pub enum Instruction {
     Mul(Register, Register, Register),
     Div(Register, Register, Register),
     Print,
+    Printr,
     Copy(Register, Register),
     // If register 0 == register 1, jump to instruction # stored in register 2
     Beq(Register, Register, Register),
     Bne(Register, Register, Register),
-    J(u64),
-    Jr(Register),
+    J(Register),
     Halt,
+    Write(Register, Box<Instruction>),
 }
 
 impl Display for Instruction {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Instruction::Nop => write!(f, "nop"),
-            Instruction::Mov(reg, val) => write!(f, "mov {}, {}", reg.get(), val),
+            Instruction::Mov(reg, val) => write!(f, "mov {}, {}", reg, val),
             Instruction::Add(dest, src1, src2) => {
-                write!(f, "add {}, {}, {}", dest.get(), src1.get(), src2.get())
+                write!(f, "add {}, {}, {}", dest, src1, src2)
             }
             Instruction::Sub(dest, src1, src2) => {
-                write!(f, "sub {}, {}, {}", dest.get(), src1.get(), src2.get())
+                write!(f, "sub {}, {}, {}", dest, src1, src2)
             }
             Instruction::Mul(dest, src1, src2) => {
-                write!(f, "mul {}, {}, {}", dest.get(), src1.get(), src2.get())
+                write!(f, "mul {}, {}, {}", dest, src1, src2)
             }
             Instruction::Div(dest, src1, src2) => {
-                write!(f, "div {}, {}, {}", dest.get(), src1.get(), src2.get())
+                write!(f, "div {}, {}, {}", dest, src1, src2)
             }
             Instruction::Print => write!(f, "print"),
-            Instruction::Copy(dest, src) => write!(f, "copy {}, {}", dest.get(), src.get()),
+            Instruction::Printr => write!(f, "printr"),
+            Instruction::Copy(dest, src) => write!(f, "copy {}, {}", dest, src),
             Instruction::Beq(reg1, reg2, reg3) => {
-                write!(f, "beq {}, {}, {}", reg1.get(), reg2.get(), reg3.get())
+                write!(f, "beq {}, {}, {}", reg1, reg2, reg3)
             }
             Instruction::Bne(reg1, reg2, reg3) => {
-                write!(f, "bne {}, {}, {}", reg1.get(), reg2.get(), reg3.get())
+                write!(f, "bne {}, {}, {}", reg1, reg2, reg3)
             }
-            Instruction::J(constant) => write!(f, "j {}", constant), 
-            Instruction::Jr(reg) => write!(f, "jr {}", reg.get()),
+            Instruction::J(reg) => write!(f, "j {}", reg),
             Instruction::Halt => write!(f, "halt"),
+            Instruction::Write(dst, instr) => write!(f, "write {}, [{}]", dst, instr),
         }
     }
 }

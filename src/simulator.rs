@@ -9,23 +9,25 @@ pub struct Simulator {
 
 impl Simulator {
     pub fn new(input: &[Instruction]) -> Simulator {
-        let mut program = [Instruction::Nop; 1024];
+        let mut program: Vec<Instruction> = (0..1024).map(|_| Instruction::Nop).collect();
         for (i, instr) in input.iter().enumerate() {
-           program[i] = *instr;
+            program[i] = instr.clone();
         }
         Simulator {
             registers: [0; 16],
-            program,
+            program: program.try_into().unwrap(),
             pc: 0,
             output: Vec::new(),
         }
     }
 
     pub fn run(&mut self) {
-        web_sys::console::log_1(&format!("{:?}", self.program).into());
-
         loop {
-            let instr = self.program[self.pc];
+            if self.pc >= self.program.len() {
+                self.output.push(format!("Error: program counter {} out of bounds. To stop execution, use a `halt` instruction.", self.pc));
+                break;
+            }
+            let instr = self.program[self.pc].clone();
             match instr {
                 Instruction::Nop => {
                     self.pc += 1;
@@ -36,22 +38,22 @@ impl Simulator {
                 }
                 Instruction::Add(dest, src1, src2) => {
                     self.registers[dest.get() as usize] =
-                        self.registers[src1.get() as usize] + self.registers[src2.get() as usize];
+                        self.registers[src1.get() as usize].wrapping_add(self.registers[src2.get() as usize]);
                     self.pc += 1;
                 }
                 Instruction::Sub(dest, src1, src2) => {
                     self.registers[dest.get() as usize] =
-                        self.registers[src1.get() as usize] - self.registers[src2.get() as usize];
+                        self.registers[src1.get() as usize].wrapping_sub(self.registers[src2.get() as usize]);
                     self.pc += 1;
                 }
                 Instruction::Mul(dest, src1, src2) => {
                     self.registers[dest.get() as usize] =
-                        self.registers[src1.get() as usize] * self.registers[src2.get() as usize];
+                        self.registers[src1.get() as usize].wrapping_mul(self.registers[src2.get() as usize]);
                     self.pc += 1;
                 }
                 Instruction::Div(dest, src1, src2) => {
                     self.registers[dest.get() as usize] =
-                        self.registers[src1.get() as usize] / self.registers[src2.get() as usize];
+                        self.registers[src1.get() as usize].wrapping_div(self.registers[src2.get() as usize]);
                     self.pc += 1;
                 }
                 Instruction::Print => {
@@ -59,8 +61,27 @@ impl Simulator {
                     self.output.push(self.program[pc].to_string());
                     self.pc += 1;
                 }
+                Instruction::Printr => {
+                    let pc = if self.pc == 0 { 1023 } else { self.pc - 1 };
+                    self.output.push(self.program[pc].to_string());
+                    self.output.push(format!("registers: {:?}", self.registers));
+                    self.pc += 1;
+                }
                 Instruction::Copy(dest, src) => {
-                    self.program[self.registers[dest.get() as usize] as usize] = self.program[self.registers[src.get() as usize] as usize];
+                    let src_addr = self.registers[src.get() as usize] as usize;
+                    if src_addr >= self.program.len() {
+                        self.output.push(format!("Error: copy from address {} out of bounds.", src_addr));
+                        break;
+                    }
+
+                    let dest_addr = self.registers[dest.get() as usize] as usize;
+                    if dest_addr >= self.program.len() {
+                        self.output.push(format!("Error: copy to address {} out of bounds.", dest_addr));
+                        break;
+                    }
+
+                    self.program[dest_addr] =
+                        self.program[src_addr].clone();
                     self.pc += 1;
                 }
                 Instruction::Beq(reg1, reg2, reg3) => {
@@ -77,16 +98,27 @@ impl Simulator {
                         self.pc += 1;
                     }
                 }
-                Instruction::J(constant) => {
-                    self.pc = constant as usize;
-                }
-                Instruction::Jr(reg) => {
+                Instruction::J(reg) => {
                     self.pc = self.registers[reg.get() as usize] as usize;
+                    self.registers[15] = self.pc as u64;
+                }
+                Instruction::Write(dst, instr) => {
+                    let dest_addr = self.registers[dst.get() as usize] as usize;
+                    if dest_addr >= self.program.len() {
+                        self.output.push(format!("Error: write to address {} out of bounds.", dest_addr));
+                        break;
+                    }
+                    self.program[dest_addr] = *instr;
+                    self.pc += 1;
                 }
                 Instruction::Halt => {
                     break;
                 }
             }
+        }
+        if self.output.is_empty() {
+            // Ensure output always shows up if a program ran
+            self.output.push("<no output>".to_string());
         }
     }
 }
