@@ -21,8 +21,9 @@ Register: Register = {
     "r15" => Register::new(15),
 }
 
-Constant: u64 = {
+Constant: i64 = {
     <c: r"[0-9]+"> => c.parse().unwrap(),
+    <c: r"-[0-9]+"> => c.parse().unwrap(),
 }
 
 Instruction: Instruction = {
@@ -37,6 +38,7 @@ Instruction: Instruction = {
     "beq" <r0: Register> "," <r1: Register> "," <r2: Register> => Instruction::Beq(r0, r1, r2),
     "bne" <r0: Register> "," <r1: Register> "," <r2: Register> => Instruction::Bne(r0, r1, r2),
     "j" <Register> => Instruction::J(<>),
+    "rj" <Register> => Instruction::Rj(<>),
     "halt" => Instruction::Halt,
     "write" <dst: Register> "," "[" <instr: Instruction> "]" => Instruction::Write(dst, Box::new(instr)),
 }

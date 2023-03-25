@@ -1,7 +1,7 @@
 use crate::ast::Instruction;
 
 pub struct Simulator {
-    pub registers: [u64; 16],
+    pub registers: [i64; 16],
     pub program: [Instruction; 1024],
     pub pc: usize,
     pub output: Vec<String>,
@@ -99,8 +99,13 @@ impl Simulator {
                     }
                 }
                 Instruction::J(reg) => {
-                    let new_r15 = self.pc as u64 + 1;
+                    let new_r15 = self.pc as i64 + 1;
                     self.pc = self.registers[reg.get() as usize] as usize;
+                    self.registers[15] = new_r15;
+                }
+                Instruction::Rj(reg) => {
+                    let new_r15 = self.pc as i64 + 1;
+                    self.pc = self.pc + self.registers[reg.get() as usize] as usize;
                     self.registers[15] = new_r15;
                 }
                 Instruction::Write(dst, instr) => {

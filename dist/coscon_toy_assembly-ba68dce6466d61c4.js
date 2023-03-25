@@ -513,7 +513,7 @@ function getImports() {
     imports.wbg.__wbindgen_throw = function(arg0, arg1) {
         throw new Error(getStringFromWasm0(arg0, arg1));
     };
-    imports.wbg.__wbindgen_closure_wrapper1219 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbindgen_closure_wrapper1225 = function(arg0, arg1, arg2) {
         const ret = makeMutClosure(arg0, arg1, 178, __wbg_adapter_18);
         return addHeapObject(ret);
     };
@@ -551,7 +551,7 @@ function initSync(module) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('coscon_toy_assembly-2fbc78f311b4ce4d_bg.wasm', import.meta.url);
+        input = new URL('coscon_toy_assembly-ba68dce6466d61c4_bg.wasm', import.meta.url);
     }
     const imports = getImports();
 

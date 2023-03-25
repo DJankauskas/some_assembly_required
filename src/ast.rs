@@ -26,7 +26,7 @@ impl Display for Register {
 #[derive(Clone, Debug)]
 pub enum Instruction {
     Nop,
-    Mov(Register, u64),
+    Mov(Register, i64),
     Add(Register, Register, Register),
     Sub(Register, Register, Register),
     Mul(Register, Register, Register),
@@ -37,6 +37,7 @@ pub enum Instruction {
     Beq(Register, Register, Register),
     Bne(Register, Register, Register),
     J(Register),
+    Rj(Register),
     Halt,
     Write(Register, Box<Instruction>),
 }
@@ -65,6 +66,7 @@ impl Display for Instruction {
                 write!(f, "bne {}, {}, {}", reg1, reg2, reg3)
             }
             Instruction::J(reg) => write!(f, "j {}", reg),
+            Instruction::Rj(reg) => write!(f, "rj {}", reg),
             Instruction::Halt => write!(f, "halt"),
             Instruction::Write(dst, instr) => write!(f, "write {}, [{}]", dst, instr),
         }
