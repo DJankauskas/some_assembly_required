@@ -72,3 +72,29 @@ impl Display for Instruction {
         }
     }
 }
+
+// String pos to line:column numbers (0-indexed)
+pub fn get_line_col(code: &str, pos: usize) -> LineCol {
+    let mut line = 0;
+    let mut col = 0;
+    for (i, c) in code.chars().enumerate() {
+        if i == pos {
+            break;
+        }
+        if c == '\n' {
+            line += 1;
+            col = 0;
+        } else {
+            col += 1;
+        }
+    }
+    LineCol(line, col)
+}
+
+pub struct LineCol(pub usize, pub usize);
+
+impl Display for LineCol {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}:{}", self.0, self.1)
+    }
+}

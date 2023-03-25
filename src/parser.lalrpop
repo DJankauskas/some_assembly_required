@@ -1,3 +1,4 @@
+use lalrpop_util::ParseError;
 use crate::ast::{Instruction, Register};
 
 grammar;
@@ -22,8 +23,8 @@ Register: Register = {
 }
 
 Constant: i64 = {
-    <c: r"[0-9]+"> => c.parse().unwrap(),
-    <c: r"-[0-9]+"> => c.parse().unwrap(),
+    <c: r"[0-9]+"> =>? c.parse().map_err(|_| ParseError::User { error: "Immediate out of bounds" }),
+    <c: r"-[0-9]+"> =>? c.parse().map_err(|_| ParseError::User { error: "Immediate out of bounds" }),
 }
 
 Instruction: Instruction = {

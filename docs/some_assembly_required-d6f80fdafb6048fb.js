@@ -513,8 +513,8 @@ function getImports() {
     imports.wbg.__wbindgen_throw = function(arg0, arg1) {
         throw new Error(getStringFromWasm0(arg0, arg1));
     };
-    imports.wbg.__wbindgen_closure_wrapper344 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 155, __wbg_adapter_18);
+    imports.wbg.__wbindgen_closure_wrapper340 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 150, __wbg_adapter_18);
         return addHeapObject(ret);
     };
 
@@ -551,7 +551,7 @@ function initSync(module) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('some_assembly_required-824b778ca0dcf42e_bg.wasm', import.meta.url);
+        input = new URL('some_assembly_required-d6f80fdafb6048fb_bg.wasm', import.meta.url);
     }
     const imports = getImports();
 
