@@ -1,5 +1,5 @@
 use lalrpop_util::ParseError;
-use crate::ast::{Instruction, Register};
+use crate::ast::{Instruction, Register, ProgramElement};
 
 grammar;
 
@@ -44,6 +44,15 @@ Instruction: Instruction = {
     "write" <dst: Register> "," "[" <instr: Instruction> "]" => Instruction::Write(dst, Box::new(instr)),
 }
 
-pub Program: Vec<Instruction> = {
-    Instruction* => <>,
+Comment: String = {
+    <c: r";.*(\r\n|\r|\n)"> => c.to_string(),
+}
+
+ProgramElement: ProgramElement = {
+    <i: Instruction> => ProgramElement::Instruction(i),
+    <c: Comment> => ProgramElement::Comment(c),
+}
+
+pub Program: Vec<ProgramElement> = {
+    ProgramElement* => <>,
 }

@@ -5,7 +5,7 @@ mod ast;
 mod simulator;
 lalrpop_mod!(pub parser);
 
-use ast::Instruction;
+use ast::{Instruction, strip_comments};
 use avalanche::{component, state, tracked, View};
 use avalanche_web::components::{Button, Div, Text, TextArea, H1};
 
@@ -141,7 +141,7 @@ fn process_code(
     code_name: &str,
 ) -> Result<(Vec<ast::Instruction>, Option<String>), String> {
     let program = parser::ProgramParser::new().parse(code);
-    let mut program = match program {
+    let program = match program {
         Ok(program) => program,
         Err(err) => {
             return Err(format!(
@@ -150,6 +150,8 @@ fn process_code(
             ));
         }
     };
+    
+    let mut program = strip_comments(program);
 
     // Let user know if code is too long.
     let len_msg = if program.len() > len {

@@ -73,6 +73,21 @@ impl Display for Instruction {
     }
 }
 
+pub enum ProgramElement {
+    Instruction(Instruction),
+    Comment(String),
+}
+
+pub fn strip_comments(program: Vec<ProgramElement>) -> Vec<Instruction> {
+    program
+        .into_iter()
+        .filter_map(|elem| match elem {
+            ProgramElement::Instruction(instr) => Some(instr),
+            ProgramElement::Comment(_) => None,
+        })
+        .collect()
+}
+
 // String pos to line:column numbers (0-indexed)
 pub fn get_line_col(code: &str, pos: usize) -> LineCol {
     let mut line = 0;
