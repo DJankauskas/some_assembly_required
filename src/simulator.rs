@@ -60,7 +60,7 @@ impl Simulator {
                     let pc = if self.pc == 0 { 1023 } else { self.pc - 1 };
                     self.output.push(self.program[pc].to_string());
                     let mut register_output = String::new();
-                    for i in 0..8 {
+                    for i in 0..15 {
                         register_output += &format!("r{}: {}, ", i, self.registers[i]);
                     }
                     register_output += &format!("r15: {}", self.registers[15]);
@@ -104,9 +104,7 @@ impl Simulator {
                     self.registers[15] = new_r15;
                 }
                 Instruction::Rj(reg) => {
-                    let new_r15 = self.pc as i64 + 1;
                     self.pc = self.pc + self.registers[reg.get() as usize] as usize;
-                    self.registers[15] = new_r15;
                 }
                 Instruction::Write(dst, instr) => {
                     let dest_addr = self.registers[dst.get() as usize] as usize;
