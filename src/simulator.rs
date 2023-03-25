@@ -99,8 +99,9 @@ impl Simulator {
                     }
                 }
                 Instruction::J(reg) => {
+                    let new_r15 = self.pc as u64 + 1;
                     self.pc = self.registers[reg.get() as usize] as usize;
-                    self.registers[15] = self.pc as u64;
+                    self.registers[15] = new_r15;
                 }
                 Instruction::Write(dst, instr) => {
                     let dest_addr = self.registers[dst.get() as usize] as usize;
