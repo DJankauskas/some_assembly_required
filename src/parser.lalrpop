@@ -33,6 +33,7 @@ Instruction: Instruction = {
     "add" <r0: Register> "," <r1: Register> "," <r2: Register> => Instruction::Add(r0, r1, r2),
     "sub" <r0: Register> "," <r1: Register> "," <r2: Register> => Instruction::Sub(r0, r1, r2),
     "mul" <r0: Register> "," <r1: Register> "," <r2: Register> => Instruction::Mul(r0, r1, r2),
+    "div" <r0: Register> "," <r1: Register> "," <r2: Register> => Instruction::Div(r0, r1, r2),
     "print" => Instruction::Print,
     "printr" => Instruction::Printr,
     "copy" <r0: Register> "," <r1: Register> => Instruction::Copy(r0, r1),

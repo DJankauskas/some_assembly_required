@@ -51,6 +51,11 @@ impl Simulator {
                         self.registers[src1.get() as usize].wrapping_mul(self.registers[src2.get() as usize]);
                     self.pc += 1;
                 }
+                Instruction::Div(dest, src1, src2) => {
+                    self.registers[dest.get() as usize] =
+                        self.registers[src1.get() as usize].wrapping_div(self.registers[src2.get() as usize]);
+                    self.pc += 1;
+                }
                 Instruction::Print => {
                     let pc = if self.pc == 0 { 1023 } else { self.pc - 1 };
                     self.output.push(self.program[pc].to_string());
